@@ -1,186 +1,688 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VitalTrack</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VitalTrack - Monitoreo de Signos Vitales</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-  <style>
-    :root {
-      --primary: #7DC3DE;
-      --light: #EAF6FB;
-      --dark: #1f2d3d;
-    }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow-x: hidden;
+            background: #0a0e27;
+            color: #fff;
+        }
 
-    * {
-      box-sizing: border-box;
-      font-family: 'Segoe UI', sans-serif;
-      margin: 0;
-      padding: 0;
-    }
+        /* Navbar */
+        nav {
+            position: fixed;
+            width: 100%;
+            padding: 20px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            background: rgba(10, 14, 39, 0.9);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s;
+        }
 
-    body {
-      background: white;
-      color: var(--dark);
-      scroll-behavior: smooth;
-    }
+        nav.scrolled {
+            padding: 15px 50px;
+            box-shadow: 0 5px 30px rgba(125, 195, 222, 0.2);
+        }
 
-    header {
-      background: linear-gradient(135deg, var(--primary), #5ab4d4);
-      color: white;
-      padding: 80px 20px;
-      text-align: center;
-    }
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            background: linear-gradient(135deg, #7DC3DE, #5EA8C7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            cursor: pointer;
+        }
 
-    header h1 {
-      font-size: 3rem;
-      margin-bottom: 10px;
-    }
+        .nav-links {
+            display: flex;
+            gap: 40px;
+            list-style: none;
+        }
 
-    header p {
-      font-size: 1.2rem;
-      opacity: 0.95;
-      max-width: 600px;
-      margin: 0 auto 25px;
-    }
+        .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+            position: relative;
+        }
 
-    .btn {
-      display: inline-block;
-      padding: 14px 30px;
-      border-radius: 30px;
-      background: white;
-      color: var(--primary);
-      font-weight: bold;
-      text-decoration: none;
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #7DC3DE;
+            transition: width 0.3s;
+        }
 
-    .btn:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 10px 20px rgba(0,0,0,0.15);
-    }
+        .nav-links a:hover::after {
+            width: 100%;
+        }
 
-    section {
-      padding: 80px 20px;
-      max-width: 1100px;
-      margin: auto;
-    }
+        .cta-nav {
+            background: linear-gradient(135deg, #7DC3DE, #5EA8C7);
+            padding: 12px 30px;
+            border-radius: 50px;
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            box-shadow: 0 5px 20px rgba(125, 195, 222, 0.4);
+        }
 
-    .features {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 30px;
-    }
+        .cta-nav:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 25px rgba(125, 195, 222, 0.6);
+        }
 
-    .card {
-      background: white;
-      border-radius: 20px;
-      padding: 25px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.08);
-      transition: transform 0.3s;
-    }
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 100px;
+            position: relative;
+            overflow: hidden;
+        }
 
-    .card:hover {
-      transform: translateY(-5px);
-    }
+        .hero-content {
+            max-width: 600px;
+            z-index: 2;
+            animation: fadeInLeft 1s ease-out;
+        }
 
-    .card h3 {
-      margin-bottom: 10px;
-      color: var(--primary);
-    }
+        @keyframes fadeInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
 
-    .mockup {
-      background: var(--light);
-      border-radius: 30px;
-      padding: 40px;
-      text-align: center;
-    }
+        .hero h1 {
+            font-size: 64px;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
 
-    .mockup img {
-      width: 230px;
-      border-radius: 20px;
-    }
+        .gradient-text {
+            background: linear-gradient(135deg, #7DC3DE, #5EA8C7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
 
-    footer {
-      text-align: center;
-      padding: 25px;
-      background: var(--light);
-      color: #555;
-    }
+        .hero p {
+            font-size: 20px;
+            color: #b0b8d4;
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
 
-    .fade {
-      opacity: 0;
-      transform: translateY(20px);
-      transition: opacity 0.6s ease, transform 0.6s ease;
-    }
+        .hero-buttons {
+            display: flex;
+            gap: 20px;
+        }
 
-    .fade.show {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  </style>
+        .btn-primary, .btn-secondary {
+            padding: 16px 40px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #7DC3DE, #5EA8C7);
+            color: white;
+            box-shadow: 0 10px 30px rgba(125, 195, 222, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(125, 195, 222, 0.6);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #7DC3DE;
+            border: 2px solid #7DC3DE;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(125, 195, 222, 0.1);
+            transform: translateY(-3px);
+        }
+
+        /* Hero Image/Phone Mockup */
+        .hero-image {
+            position: relative;
+            animation: fadeInRight 1s ease-out;
+        }
+
+        @keyframes fadeInRight {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .phone-mockup {
+            width: 350px;
+            height: 700px;
+            background: linear-gradient(135deg, #1a1f3a, #0a0e27);
+            border-radius: 40px;
+            padding: 20px;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
+            position: relative;
+            border: 3px solid #7DC3DE;
+        }
+
+        .phone-screen {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #7DC3DE, #5EA8C7);
+            border-radius: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pulse-circle {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.5);
+                opacity: 0;
+            }
+        }
+
+        .heart-rate {
+            font-size: 72px;
+            font-weight: bold;
+            z-index: 1;
+        }
+
+        .bpm-text {
+            font-size: 20px;
+            margin-top: 10px;
+            z-index: 1;
+        }
+
+        /* Floating Particles */
+        .particle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: #7DC3DE;
+            border-radius: 50%;
+            animation: float 15s infinite;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) translateX(0);
+                opacity: 0;
+            }
+            10%, 90% {
+                opacity: 1;
+            }
+            50% {
+                transform: translateY(-100vh) translateX(100px);
+            }
+        }
+
+        /* Features Section */
+        .features {
+            padding: 150px 100px;
+            background: linear-gradient(180deg, #0a0e27, #1a1f3a);
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: #b0b8d4;
+            font-size: 20px;
+            margin-bottom: 80px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 40px;
+            border-radius: 20px;
+            border: 1px solid rgba(125, 195, 222, 0.2);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            background: rgba(125, 195, 222, 0.1);
+            border-color: #7DC3DE;
+            box-shadow: 0 20px 50px rgba(125, 195, 222, 0.3);
+        }
+
+        .feature-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #7DC3DE, #5EA8C7);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            margin-bottom: 25px;
+        }
+
+        .feature-card h3 {
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+
+        .feature-card p {
+            color: #b0b8d4;
+            line-height: 1.6;
+        }
+
+        /* Stats Section */
+        .stats {
+            padding: 100px;
+            background: linear-gradient(135deg, #7DC3DE, #5EA8C7);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 64px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            padding: 150px 100px;
+            background: #0a0e27;
+            text-align: center;
+        }
+
+        .cta-section h2 {
+            font-size: 48px;
+            margin-bottom: 30px;
+        }
+
+        .cta-section p {
+            font-size: 20px;
+            color: #b0b8d4;
+            margin-bottom: 50px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Footer */
+        footer {
+            padding: 50px 100px;
+            background: #050816;
+            border-top: 1px solid rgba(125, 195, 222, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 30px;
+        }
+
+        .footer-links a {
+            color: #b0b8d4;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: #7DC3DE;
+        }
+
+        /* Mobile Menu */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            gap: 5px;
+        }
+
+        .hamburger span {
+            width: 25px;
+            height: 3px;
+            background: #7DC3DE;
+            border-radius: 3px;
+            transition: all 0.3s;
+        }
+
+        @media (max-width: 768px) {
+            nav {
+                padding: 20px 30px;
+            }
+
+            .nav-links {
+                position: fixed;
+                top: 70px;
+                right: -100%;
+                background: rgba(10, 14, 39, 0.98);
+                flex-direction: column;
+                padding: 40px;
+                border-radius: 20px;
+                transition: right 0.3s;
+            }
+
+            .nav-links.active {
+                right: 30px;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+
+            .hero {
+                flex-direction: column;
+                padding: 100px 30px 50px;
+                height: auto;
+                text-align: center;
+            }
+
+            .hero h1 {
+                font-size: 42px;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+            }
+
+            .phone-mockup {
+                width: 280px;
+                height: 560px;
+                margin-top: 50px;
+            }
+
+            .features, .cta-section {
+                padding: 80px 30px;
+            }
+
+            .section-title {
+                font-size: 36px;
+            }
+
+            .stats {
+                flex-direction: column;
+                gap: 40px;
+                padding: 60px 30px;
+            }
+
+            footer {
+                flex-direction: column;
+                gap: 30px;
+                padding: 40px 30px;
+            }
+        }
+    </style>
 </head>
-
 <body>
+    <!-- Navigation -->
+    <nav id="navbar">
+        <div class="logo">VitalTrack</div>
+        <ul class="nav-links" id="navLinks">
+            <li><a href="#inicio">Inicio</a></li>
+            <li><a href="#caracteristicas">Características</a></li>
+            <li><a href="#contacto">Contacto</a></li>
+        </ul>
+        <a href="#descargar" class="cta-nav">Descargar App</a>
+        <div class="hamburger" id="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </nav>
 
-<header>
-  <h1>VitalTrack</h1>
-  <p>Monitorea tus signos vitales de forma inteligente, segura y en tiempo real.</p>
-  <a href="#features" class="btn">Conoce más</a>
-</header>
+    <!-- Hero Section -->
+    <section class="hero" id="inicio">
+        <div class="hero-content">
+            <h1>Tu Salud en <span class="gradient-text">Tiempo Real</span></h1>
+            <p>Monitorea tus signos vitales de manera inteligente y mantén el control de tu bienestar con VitalTrack. Tecnología médica al alcance de tu mano.</p>
+            <div class="hero-buttons">
+                <button class="btn-primary" onclick="scrollToSection('descargar')">Descargar Ahora</button>
+                <button class="btn-secondary" onclick="scrollToSection('caracteristicas')">Saber Más</button>
+            </div>
+        </div>
+        <div class="hero-image">
+            <div class="phone-mockup">
+                <div class="phone-screen">
+                    <div class="pulse-circle"></div>
+                    <div class="heart-rate" id="heartRate">72</div>
+                    <div class="bpm-text">BPM</div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-<section id="features">
-  <h2 style="text-align:center; margin-bottom:40px;">Funciones Principales</h2>
+    <!-- Floating Particles -->
+    <script>
+        for (let i = 0; i < 20; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.animationDelay = Math.random() * 15 + 's';
+            particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+            document.body.appendChild(particle);
+        }
+    </script>
 
-  <div class="features">
-    <div class="card fade">
-      <h3>Monitoreo Vital</h3>
-      <p>Visualiza frecuencia cardíaca, oxigenación, temperatura y respiración en tiempo real.</p>
-    </div>
+    <!-- Features Section -->
+    <section class="features" id="caracteristicas">
+        <h2 class="section-title">Características <span class="gradient-text">Principales</span></h2>
+        <p class="section-subtitle">Todo lo que necesitas para monitorear tu salud en una sola app</p>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">❤️</div>
+                <h3>Frecuencia Cardíaca</h3>
+                <p>Monitoreo continuo de tu ritmo cardíaco con alertas inteligentes en caso de anomalías.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🌡️</div>
+                <h3>Temperatura Corporal</h3>
+                <p>Registro preciso de temperatura con historial completo y análisis de tendencias.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">💨</div>
+                <h3>Saturación de Oxígeno</h3>
+                <p>Medición en tiempo real de niveles de oxígeno en sangre con recomendaciones personalizadas.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <h3>Análisis de Datos</h3>
+                <p>Gráficas detalladas y reportes completos de tu evolución de salud a lo largo del tiempo.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔔</div>
+                <h3>Alertas Personalizadas</h3>
+                <p>Configura límites y recibe notificaciones instantáneas cuando tus signos vitales requieran atención.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔒</div>
+                <h3>Privacidad Total</h3>
+                <p>Tus datos de salud están protegidos con encriptación de nivel médico y nunca se comparten.</p>
+            </div>
+        </div>
+    </section>
 
-    <div class="card fade">
-      <h3>Sistema de Alertas</h3>
-      <p>Recibe alertas automáticas cuando algún parámetro salga de los valores normales.</p>
-    </div>
+    <!-- Stats Section -->
+    <section class="stats">
+        <div class="stat-item">
+            <div class="stat-number" id="users">0</div>
+            <div class="stat-label">Usuarios Activos</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number" id="readings">0</div>
+            <div class="stat-label">Lecturas Diarias</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number" id="satisfaction">0%</div>
+            <div class="stat-label">Satisfacción</div>
+        </div>
+    </section>
 
-    <div class="card fade">
-      <h3>Historial Médico</h3>
-      <p>Consulta registros anteriores y analiza tendencias de manera visual y clara.</p>
-    </div>
-  </div>
-</section>
+    <!-- CTA Section -->
+    <section class="cta-section" id="descargar">
+        <h2>Comienza a cuidar tu <span class="gradient-text">salud hoy</span></h2>
+        <p>Descarga VitalTrack y lleva el control de tus signos vitales a donde vayas. Disponible para iOS y Android.</p>
+        <div class="hero-buttons" style="justify-content: center;">
+            <button class="btn-primary">📱 App Store</button>
+            <button class="btn-primary">🤖 Google Play</button>
+        </div>
+    </section>
 
-<section>
-  <div class="mockup fade">
-    <h2>Diseñada para cuidar</h2>
-    <p style="margin: 15px 0 30px;">
-      VitalTrack combina tecnología IoT con una interfaz moderna y amigable.
-    </p>
-    <button class="btn" onclick="showAlert()">Ver Demo</button>
-  </div>
-</section>
+    <!-- Footer -->
+    <footer id="contacto">
+        <div class="logo">VitalTrack</div>
+        <div class="footer-links">
+            <a href="#">Privacidad</a>
+            <a href="#">Términos</a>
+            <a href="#">Soporte</a>
+            <a href="#">Contacto</a>
+        </div>
+        <div>© 2024 VitalTrack. Todos los derechos reservados.</div>
+    </footer>
 
-<footer>
-  © 2025 VitalTrack — Proyecto académico / demostrativo
-</footer>
+    <script>
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
 
-<script>
-  function showAlert() {
-    alert('Demo interactiva: aquí se podría abrir un video, animación o simulador.');
-  }
+        // Mobile menu toggle
+        const hamburger = document.getElementById('hamburger');
+        const navLinks = document.getElementById('navLinks');
+        hamburger.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+        });
 
-  const elements = document.querySelectorAll('.fade');
+        // Smooth scroll
+        function scrollToSection(id) {
+            document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+        }
 
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('show');
-      }
-    });
-  }, { threshold: 0.2 });
+        // Animated heart rate
+        let heartRate = 72;
+        setInterval(() => {
+            heartRate = 68 + Math.floor(Math.random() * 8);
+            document.getElementById('heartRate').textContent = heartRate;
+        }, 1500);
 
-  elements.forEach(el => observer.observe(el));
-</script>
+        // Animated counters
+        function animateCounter(id, target, suffix = '') {
+            let current = 0;
+            const increment = target / 100;
+            const element = document.getElementById(id);
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    current = target;
+                    clearInterval(timer);
+                }
+                element.textContent = Math.floor(current) + suffix;
+            }, 20);
+        }
 
+        // Intersection Observer for stats animation
+        const statsObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    animateCounter('users', 10000);
+                    animateCounter('readings', 50000);
+                    animateCounter('satisfaction', 98, '%');
+                    statsObserver.unobserve(entry.target);
+                }
+            });
+        });
+
+        statsObserver.observe(document.querySelector('.stats'));
+
+        // Feature cards hover effect with sound (visual feedback)
+        document.querySelectorAll('.feature-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-10px) scale(1.02)';
+            });
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+    </script>
 </body>
 </html>
